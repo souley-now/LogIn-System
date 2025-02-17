@@ -31,6 +31,5 @@ class SystemCreator:
             for line in lines:
                 username, password = line.strip().split(',')
                 users[username] = password
-                logged_in[username] = False
-
+                
         return users, logged_in

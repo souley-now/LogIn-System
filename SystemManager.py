@@ -9,7 +9,6 @@ class SystemManager:
         '''
         Checks whether the username exists in the users dictionary and that the password matches the username.  Returns boolean.
         '''
-    
         if username not in users or users[username] != password:
             return False
         return True
@@ -54,7 +53,9 @@ class SystemManager:
             users[username] = password
             logged_in[username] = False
             print('You have successfully signed up')
-        
+            return True
+        return False
+
        
     def log_in(self, users, logged_in, username, password):
         '''
@@ -66,16 +67,14 @@ class SystemManager:
         Even if a user is already logged in, he/she can log in again.
         '''
         
-        if username not in users:
-            print('Error: Your account does not exist.')
-        elif users[username] != password:
-            print('Error: Invalid password')
-            if username in logged_in:
-                del logged_in[username]
+        if not self.check_username_password(users, username, password):
+            print('Error: Your account does not exist or Your password is incorrect.')
+            
         else:
             logged_in[username] = True
             print(f"Welcome back {username} !!")
             return True
+        
         return False
 
     def change_password(self, users, username, old_password, new_password):
@@ -86,12 +85,8 @@ class SystemManager:
         If the new_password does not satisfy the rule(s) (not valid), prints an error message.
         Otherwise, changes the user's password in the users database, and prints a success message.
         '''
-        if username not in users:
-            print('Error: Username does not exist.')
-            return False
-        elif users[username] != old_password:
-            print('Error: Incorrect old password.')
-            return False
+        if not self.check_username_password(users, username, old_password):
+            print('Error: Invalid username or password.')
         elif not self.is_valid_password(new_password):
             print('Error: New password does not meet criteria.')
             return False
@@ -111,19 +106,17 @@ class SystemManager:
         Also deletes the user's information in the logged_in dictionary.
         '''
         
-        if username not in users:
+        if not self.check_username_password(users, username, password):
             print('Error: Username does not exist.')
-            return False
-        elif users[username] != password:
-            print('Error: Invalid password')
-            return False
         else:
             del users[username]
-            del logged_in[username]
+            if username in logged_in:
+                del logged_in[username]
             print('Success: Your account has been successfully deleted.')
             return True
+        return False
         
-    
+
     def get_sign_ups(self, users):
         '''
         Returns a list of users who are signed up (in the users dictionary).
@@ -135,5 +128,3 @@ class SystemManager:
         Returns a list of users who are logged in (in the logged_in dictionary).
         '''
         return [user for user, is_logged_in in logged_in.items() if is_logged_in]
-    
-    
